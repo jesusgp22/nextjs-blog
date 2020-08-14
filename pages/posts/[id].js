@@ -9,7 +9,7 @@ export default function Post({ postData }) {
     return (
       <Layout>
         <Head>
-          <title>JG • {postData.title}</title>
+          <title>J G • {postData.title}</title>
         </Head>
         <article>
           <h1 className={utilStyles.headingXl}>{postData.title}</h1>
