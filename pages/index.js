@@ -15,21 +15,21 @@ export default function Home({ allPostsData }) {
       </Head>
       <section className={utilStyles.headingMd}>
         <p>Hello! I'm <b>Jesus</b>, Software Engineer 🧙🏻‍♂️ and creator 🔮. Currently working as Front-end Expert for <a href="https://etale.com">Etale</a></p>
-        <p>Living at Bogotá, Colombia </p>
+        <p>Location: Bogotá, Colombia, available for Remote Work 🌎</p>
         <p>Github: <b><a href="https://github.com/jesusgp22" target='_blank'>@jesusgp22</a></b></p>
         <p>Linkedn: <b><a href="https://www.linkedin.com/in/jesusgp22/" target='_blank'>in/jesusgp22</a></b></p>
       </section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>
         <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
+          {allPostsData.map(({ id, ts, title, slug }) => (
             <li className={utilStyles.listItem} key={id}>
-              <Link href="/posts/[id]" as={`/posts/${id}`}>
+              <Link href="/posts/[slug]" as={`/posts/${slug}`}>
                 <a>{title}</a>
               </Link>
               <br />
               <small className={utilStyles.lightText}>
-                <Date dateString={date} />
+                <Date ts={ts} />
               </small>
             </li>
 
@@ -50,7 +50,7 @@ export default function Home({ allPostsData }) {
 }
 
 export async function getStaticProps() {
-  const allPostsData = getSortedPostsData()
+  const allPostsData = await getSortedPostsData()
   return {
     props: {
       allPostsData

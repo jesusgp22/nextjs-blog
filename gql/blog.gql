@@ -1,0 +1,9 @@
+type Post {
+    title: String!
+    content: String!
+    slug: String! @unique
+}
+
+type Query {
+    findPostBySlug(slug: String!): Post
+}
