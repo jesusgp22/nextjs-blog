@@ -16,10 +16,9 @@ export default function Home({ allPostsData }) {
       <section className={utilStyles.headingMd}>
         <p>Hello! I'm <b>Jesus</b>, Software Engineer 🧙🏻‍♂️ and creator 🔮. Currently working as Front-end Expert for <a href="https://etale.com">Etale</a></p>
         <p>Living at Bogotá, Colombia </p>
-        <p>Github: <b><a href="https://github.com/jesusgp22">@jesusgp22</a></b></p>
-        <p>Linkedn: <b><a href="https://www.linkedin.com/in/jesusgp22/">in/jesusgp22</a></b></p>
+        <p>Github: <b><a href="https://github.com/jesusgp22" target='_blank'>@jesusgp22</a></b></p>
+        <p>Linkedn: <b><a href="https://www.linkedin.com/in/jesusgp22/" target='_blank'>in/jesusgp22</a></b></p>
       </section>
-
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>
         <ul className={utilStyles.list}>
@@ -37,11 +36,12 @@ export default function Home({ allPostsData }) {
           ))}
         </ul>
       </section>
-
-      <section className={utilStyles.headingMd}>
-        <h4 className={utilStyles.headingLg}>About me</h4>
+      <hr className={`${utilStyles.sectionSeparator}`}/>
+      <section className={utilStyles.headingSm}>
+        <h4 className={utilStyles.headingMd}>About me</h4>
         <p>6+ years designing, developing and deploying amazing web apps. Most of my experience comes from e-commerce, B2B Crypto/HFT apps and analytics</p>
         <p>I'm passionate about turning data into pixels, React and the web</p>
+        <p>Graduated as Computer Systems Engineer at <b><a href="http://www.ula.ve" target='_blank'>ULA</a></b></p>
         <p>Currently learning 👨🏻‍💻: JAMSTACK</p>
       </section>
 
