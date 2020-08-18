@@ -5,15 +5,21 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "setup": "node -r esm ./scripts/setup.js local",
+    "destroy": "node -r esm ./scripts/destroy.js local"
   },
   "dependencies": {
     "date-fns": "^2.14.0",
+    "dotenv": "^8.2.0",
+    "envfile": "^5.0.0",
+    "esm": "^3.2.25",
     "faunadb": "^2.14.2",
     "gray-matter": "^4.0.2",
     "next": "9.3.5",
     "react": "16.13.1",
     "react-dom": "16.13.1",
+    "readline-promise": "^1.0.4",
     "remark": "^12.0.0",
     "remark-html": "^11.0.2"
   }
