@@ -191,23 +191,49 @@ const CreateLoggedInRole = CreateOrUpdateRole({
     // to limit what data and how a user can adapt data.
 
     // all UDFs for manipulating posts goes here
+    {
+      resource: q.Function('create_post'),
+      actions: {
+        call: true
+      }
+    },
     // {
-    //   resource: q.Function('create_fweet'),
+    //   resource: q.Function('edit_post'),
     //   actions: {
     //     call: true
     //   }
     // },
+    {
+      resource: q.Function('get_posts'),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: q.Function('get_posts_by_tag'),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Collection('users'),
+      actions: { read: true }
+    },
+    {
+      resource: Collection('hashtags'),
+      actions: { read: true }
+    }
   ]
 })
 
-const CreateFnRoleManipulateFweet = CreateOrUpdateRole({
-  name: 'functionrole_manipulate_fweets',
+const CreateFnRoleManipulatePost = CreateOrUpdateRole({
+  name: 'functionrole_manipulate_posts',
   privileges: [
     /** *********************** WRITE AND UPDATE PRIVILEGES *************************/
     // Of course the function needs to update a fweet
     {
-      resource: Collection('fweets'),
-      actions: { create: true, write: true }
+      resource: Collection('posts'),
+      actions: { create: true, write: true, update: true }
     },
     // But it also needs to read and update rate limiting stats.
     {
@@ -215,46 +241,16 @@ const CreateFnRoleManipulateFweet = CreateOrUpdateRole({
       actions: { write: true, history_read: true, create: true }
     },
     {
-      resource: Collection('comments'),
-      actions: { write: true, create: true }
-    },
-    // On returning the created fweet, we add the stats (even if there are non yet)
-    {
-      resource: Collection('fweetstats'),
-      actions: { write: true, create: true }
-    },
-    {
       resource: Collection('hashtags'),
       actions: { create: true }
     },
-    {
-      resource: Collection('followerstats'),
-      actions: { write: true, create: true }
-    },
     /** *********************** READ PRIVILEGES *************************/
     {
-      resource: Collection('fweets'),
+      resource: Collection('posts'),
       actions: { read: true }
     },
     {
-      resource: Index('all_fweets'),
-      actions: { read: true }
-    },
-    {
-      resource: Collection('fweetstats'),
-      actions: { read: true }
-    },
-    {
-      resource: Index('fweetstats_by_user_and_fweet'),
-      actions: { read: true }
-    },
-    {
-      resource: Collection('comments'),
-      // Logged in users can read comments
-      actions: { read: true }
-    },
-    {
-      resource: Index('comments_by_fweet_ordered'),
+      resource: Index('all_posts'),
       actions: { read: true }
     },
     {
@@ -271,25 +267,17 @@ const CreateFnRoleManipulateFweet = CreateOrUpdateRole({
       actions: { read: true }
     },
     {
-      resource: Collection('comments'),
-      actions: { read: true }
-    },
-    {
       resource: Collection('rate_limiting'),
       actions: { read: true }
     },
-    {
-      // To search
-      resource: Index('hashtags_and_users_by_wordparts'),
-      actions: { read: true }
-    },
+    // {
+    //   // To search
+    //   resource: Index('hashtags_and_users_by_wordparts'),
+    //   actions: { read: true }
+    // },
     {
       // To check whether a hashtag already exists
       resource: Index('hashtags_by_name'),
-      actions: { read: true }
-    },
-    {
-      resource: Collection('users'),
       actions: { read: true }
     },
     {
@@ -297,29 +285,9 @@ const CreateFnRoleManipulateFweet = CreateOrUpdateRole({
       actions: { read: true }
     },
     {
-      resource: Collection('followerstats'),
+      resource: Index('posts_by_author'),
       actions: { read: true }
     },
-    {
-      resource: Index('followerstats_by_author_and_follower'),
-      actions: { read: true }
-    },
-    {
-      resource: Index('followerstats_by_user_popularity'),
-      actions: { read: true }
-    },
-    {
-      resource: Index('fweets_by_author'),
-      actions: { read: true }
-    },
-    {
-      resource: Index('fweets_by_tag'),
-      actions: { read: true }
-    },
-    {
-      resource: Index('users_by_alias'),
-      actions: { read: true }
-    }
   ]
 })
 
@@ -377,5 +345,5 @@ export {
   CreateLoggedInRole,
   CreateAllMightyRole,
   CreateFnRoleRegisterWithUser,
-  CreateFnRoleManipulateFweet
+  CreateFnRoleManipulatePost
 }

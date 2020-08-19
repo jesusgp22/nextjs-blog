@@ -5,6 +5,9 @@ import {
   CreateAccountUDF,
   CreateAccountWithUserUDF,
   CreateAccountWithUserNoRatelimitingUDF,
+  CreatePostUDF,
+  GetPostsUDF,
+  GetPostsByTagUDF,
 } from './functions'
 
 import {
@@ -18,12 +21,14 @@ import {
   CreateFnRoleRegister,
   CreateLoggedInRole,
   CreateAllMightyRole,
-  CreateFnRoleManipulateFweet
+  CreateFnRoleManipulatePost
 } from './roles'
 
 import { createAccountCollection } from './accounts'
 import { createUsersCollection } from './users'
 import { createRateLimitingCollection } from './rate-limiting'
+import { createPostsCollection } from './posts'
+import { createHashtagCollection } from './hashtags'
 
 import { handleSetupError } from '../helpers/errors'
 
@@ -53,17 +58,23 @@ async function setupDatabase(client) {
   console.log('1.  -- Collections and Indexes -- Creating collections')
   await handleSetupError(createAccountCollection(client), 'accounts collection')
   await handleSetupError(createRateLimitingCollection(client), 'profiles collection')
+  await handleSetupError(createHashtagCollection(client), 'hashtag collection')
   await handleSetupError(createUsersCollection(client), 'users collection')
+  await handleSetupError(createPostsCollection(client), 'posts collection')
 
   console.log('4a. -- Roles                   -- Creating security roles to be assumed by the functions')
   await handleSetupError(client.query(CreateFnRoleLogin), 'function role - login') // without rate limiting: createFnRoleRegisterWithoutRateLimiting
   await handleSetupError(client.query(CreateFnRoleRegister), 'function role - register') // without rate limiting: createFnRoleRegisterWithoutRateLimiting
   await handleSetupError(client.query(CreateFnRoleRegisterWithUser), 'function role - register with user') // without rate limiting: createFnRoleRegisterWithoutRateLimiting
+  await handleSetupError(client.query(CreateFnRoleManipulatePost), 'function role - create manipulate posts')
 
   console.log('5.  -- Functions               -- Creating User Defined Functions (UDF)')
   await handleSetupError(client.query(CreateLoginUDF), 'user defined function - login')
   await handleSetupError(client.query(CreateAccountUDF), 'user defined function - register')
   await handleSetupError(client.query(CreateAccountWithUserUDF), 'user defined function - register and create user')
+  await handleSetupError(client.query(GetPostsUDF), 'user defined function - get posts')
+  await handleSetupError(client.query(GetPostsByTagUDF), 'user defined function - get posts by tag')
+  await handleSetupError(client.query(CreatePostUDF), 'user defined function - create posts (rate limited)')
 
   console.log('4b. -- Roles                   -- Creating security role that can call the functions')
   await handleSetupError(client.query(CreateBootstrapRole), 'function role - bootstrap')
@@ -78,7 +89,7 @@ async function setupDatabaseRateLimitingSpec(client) {
   await handleSetupError(createUsersCollection(client), 'users collection')
   await handleSetupError(createAccountCollection(client), 'accounts collection')
   await handleSetupError(createRateLimitingCollection(client), 'profiles collection')
-  await handleSetupError(createFollowerStatsCollection(client), 'followerstats collection')
+  await handleSetupError(createPostsCollection(client), 'posts collection')
 
   console.log('4a. -- Roles                   -- Creating security roles to be assumed by the functions')
   await handleSetupError(client.query(CreateFnRoleLogin), 'function role - login') // without rate limiting: createFnRoleRegisterWithoutRateLimiting

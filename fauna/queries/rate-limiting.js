@@ -38,7 +38,19 @@ const rateLimitingConfig = {
   register: {
     calls: 10, // 10 users per 10 minutes
     perSeconds: 10 * 1000
-  }
+  },
+  get_posts: {
+    calls: 5,
+    perSeconds: 60 * 1000
+  },
+  get_posts_by_tag: {
+    calls: 5,
+    perSeconds: 60 * 1000
+  },
+  create_post: {
+    calls: 5,
+    perSeconds: 300 * 1000 // one post a minute
+  },
 }
 
 const getRateLimitingConf = action => {
