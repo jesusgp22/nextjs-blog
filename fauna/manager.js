@@ -13,7 +13,8 @@ class QueryManager {
   constructor(token) {
     // A client is just a wrapper, it does not create a persitant connection
     // FaunaDB behaves like an API and will include the token on each request.
-    this.bootstrapToken = token || process.env.FAUNADB_SECRET_KEY
+    // TODO: properly grab this from env
+    this.bootstrapToken = token || 'fnADzlrwt0ACE7YZ7wxlaA4Wtnd9x1d3OWQj1QS_'
     this.client = new faunadb.Client({
       secret: token || this.bootstrapToken
     })
@@ -28,8 +29,7 @@ class QueryManager {
     })
   }
 
-  register(email, password, name, alias) {
-    // randomly choose an icon
+  register(email, password, name) {
     return registerWithUser(this.client, email, password, name).then(res => {
       if (res) {
         this.client = new faunadb.Client({ secret: res.secret.secret })

@@ -43,8 +43,8 @@
     name: 'register_with_user',
     body: Query(
       Lambda(
-        ['email', 'password', 'name', 'icon'],
-        RegisterWithUser(Var('email'), Var('password'), Var('name'), Var('alias'), Var('icon'))
+        ['email', 'password', 'name'],
+        RegisterWithUser(Var('email'), Var('password'), Var('name'))
       )
     ),
     role: Role('functionrole_register_with_user')
@@ -54,8 +54,8 @@
     name: 'register_with_user',
     body: Query(
       Lambda(
-        ['email', 'password', 'name', 'icon'],
-        RegisterWithUser(Var('email'), Var('password'), Var('name'), Var('alias'), Var('icon'), false)
+        ['email', 'password', 'name'],
+        RegisterWithUser(Var('email'), Var('password'), Var('name'), false)
       )
     ),
     role: Role('functionrole_register_with_user')
