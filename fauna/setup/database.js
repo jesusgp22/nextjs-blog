@@ -101,7 +101,6 @@ async function setupDatabaseAuthSpec(client) {
   await handleSetupError(createAccountCollection(client), 'Create Accounts Collection')
   await handleSetupError(createUsersCollection(client), 'Create Users Collection')
   await handleSetupError(createRateLimitingCollection(client), 'Create Rate Limiting Collection')
-  await handleSetupError(createFollowerStatsCollection(client), 'followerstats collection')
   await handleSetupError(client.query(CreateFnRoleLoginWithoutRateLimiting), 'Create Login Fn role (no rate limiting)')
   await handleSetupError(
     client.query(CreateFnRoleRegisterWithoutRateLimiting),

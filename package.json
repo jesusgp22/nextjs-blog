@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "jest --watch",
     "setup": "node -r esm ./scripts/setup.js local",
     "destroy": "node -r esm ./scripts/destroy.js local"
   },
