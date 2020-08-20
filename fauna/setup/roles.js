@@ -57,10 +57,23 @@ const CreateBootstrapRole = CreateOrUpdateRole({
       actions: {
         call: true
       }
+    },
+    {
+      resource: q.Function('get_posts'),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: q.Function('get_posts_by_tag'),
+      actions: {
+        call: true
+      }
     }
   ]
 })
 
+// 🚫 This role is for testing purposes
 const CreateBootstrapRoleSimple = CreateOrUpdateRole({
   name: 'keyrole_calludfs',
   privileges: [
@@ -75,7 +88,19 @@ const CreateBootstrapRoleSimple = CreateOrUpdateRole({
       actions: {
         call: true
       }
-    }
+    },
+    {
+      resource: q.Function('get_posts'),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: q.Function('get_posts_by_tag'),
+      actions: {
+        call: true
+      }
+    },
   ]
 })
 
@@ -204,6 +229,14 @@ const CreateLoggedInRole = CreateOrUpdateRole({
     //   }
     // },
     {
+      resource: Collection('users'),
+      actions: { read: true }
+    },
+    {
+      resource: Collection('hashtags'),
+      actions: { read: true }
+    },
+    {
       resource: q.Function('get_posts'),
       actions: {
         call: true
@@ -215,14 +248,6 @@ const CreateLoggedInRole = CreateOrUpdateRole({
         call: true
       }
     },
-    {
-      resource: Collection('users'),
-      actions: { read: true }
-    },
-    {
-      resource: Collection('hashtags'),
-      actions: { read: true }
-    }
   ]
 })
 
@@ -295,6 +320,63 @@ const CreateFnRoleManipulatePost = CreateOrUpdateRole({
   ]
 })
 
+const CreateFnRoleGetPosts = CreateOrUpdateRole({
+  name: 'functionrole_get_posts',
+  privileges: [
+    /** *********************** WRITE AND UPDATE PRIVILEGES *************************/
+    // Of course the function needs to update a fweet
+    {
+      resource: Collection('rate_limiting'),
+      actions: { write: true, history_read: true, create: true }
+    },
+    /** *********************** READ PRIVILEGES *************************/
+    {
+      resource: Collection('posts'),
+      actions: { read: true }
+    },
+    {
+      resource: Index('all_posts'),
+      actions: { read: true }
+    },
+    {
+      resource: Index('posts_by_hashtag_ref'),
+      actions: { read: true }
+    },
+    {
+      resource: Index('rate_limiting_by_action_and_identity'),
+      actions: { read: true }
+    },
+    // We fetch user to return these together with the post.
+    {
+      resource: Collection('users'),
+      actions: { read: true }
+    },
+    {
+      resource: Collection('rate_limiting'),
+      actions: { read: true }
+    },
+    // {
+    //   // To search
+    //   resource: Index('hashtags_and_users_by_wordparts'),
+    //   actions: { read: true }
+    // },
+    {
+      // To check whether a hashtag already exists
+      resource: Index('hashtags_by_name'),
+      actions: { read: true }
+    },
+    // We fetch ht to return these together with the post.
+    {
+      resource: Collection('hashtags'),
+      actions: { read: true }
+    },
+    {
+      resource: Index('posts_by_author'),
+      actions: { read: true }
+    },
+  ]
+})
+
 const CreateAllMightyRole = CreateOrUpdateRole({
   name: 'membershiprole_loggedinallmighty',
   membership: [{ resource: Collection('accounts') }],
@@ -349,5 +431,6 @@ export {
   CreateLoggedInRole,
   CreateAllMightyRole,
   CreateFnRoleRegisterWithUser,
-  CreateFnRoleManipulatePost
+  CreateFnRoleGetPosts,
+  CreateFnRoleManipulatePost,
 }

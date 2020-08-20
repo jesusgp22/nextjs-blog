@@ -77,7 +77,8 @@ function createPost(client, title, content, hashtags = []) {
 function GetPosts() {
   const FQLStatement = GetPostsWithUsersMapGetGeneric(Map(Paginate(Match(Index("all_posts"))), Lambda(["ts", "ref"], Var("ref"))))
   
-  return AddRateLimiting('get_posts', FQLStatement, Identity())
+  // TODO: improve this to use either Identify() or global or a unique user identifier like IP
+  return AddRateLimiting('get_posts', FQLStatement, 'global')
 }
 
 // 🔌 GET ALL POSTS API ENDPOINT
@@ -94,7 +95,8 @@ function GetPostsByTag(tagname) {
     Var('res')
   ))
 
-  return AddRateLimiting('get_posts_by_tag', FQLStatement, Identity())
+  // TODO: improve this to use either Identify() or global or a unique user identifier like IP
+  return AddRateLimiting('get_posts_by_tag', FQLStatement, 'global')
 }
 
 // 🔌 GET ALL POSTS BY TAG API ENDPOINT

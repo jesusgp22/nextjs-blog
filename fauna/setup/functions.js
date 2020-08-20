@@ -85,13 +85,13 @@
 const GetPostsUDF = CreateOrUpdateFunction({
   name: 'get_posts',
   body: Query(Lambda([], GetPosts())),
-  role: Role('functionrole_manipulate_posts')
+  role: Role('functionrole_get_posts')
 })
 
 const GetPostsByTagUDF = CreateOrUpdateFunction({
   name: 'get_posts_by_tag',
   body: Query(Lambda(['tagname'], GetPostsByTag(Var('tagname')))),
-  role: Role('functionrole_manipulate_posts')
+  role: Role('functionrole_get_posts')
 })
   
   export {

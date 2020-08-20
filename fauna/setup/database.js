@@ -21,7 +21,8 @@ import {
   CreateFnRoleRegister,
   CreateLoggedInRole,
   CreateAllMightyRole,
-  CreateFnRoleManipulatePost
+  CreateFnRoleGetPosts,
+  CreateFnRoleManipulatePost,
 } from './roles'
 
 import { createAccountCollection } from './accounts'
@@ -67,6 +68,7 @@ async function setupDatabase(client) {
   await handleSetupError(client.query(CreateFnRoleRegister), 'function role - register') // without rate limiting: createFnRoleRegisterWithoutRateLimiting
   await handleSetupError(client.query(CreateFnRoleRegisterWithUser), 'function role - register with user') // without rate limiting: createFnRoleRegisterWithoutRateLimiting
   await handleSetupError(client.query(CreateFnRoleManipulatePost), 'function role - create manipulate posts')
+  await handleSetupError(client.query(CreateFnRoleGetPosts), 'function role - create get posts')
 
   console.log('5.  -- Functions               -- Creating User Defined Functions (UDF)')
   await handleSetupError(client.query(CreateLoginUDF), 'user defined function - login')
