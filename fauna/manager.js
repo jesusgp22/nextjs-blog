@@ -15,7 +15,7 @@ class QueryManager {
     // A client is just a wrapper, it does not create a persitant connection
     // FaunaDB behaves like an API and will include the token on each request.
     // TODO: properly grab this from env
-    this.bootstrapToken = token || 'fnADzph9ZFACE602Jt4LAuba1Q4RXJNejGl-oVvl'
+    this.bootstrapToken = token || process.env.NEXT_PUBLIC_FAUNA_DB_KEY
     this.client = new faunadb.Client({
       secret: token || this.bootstrapToken
     })
