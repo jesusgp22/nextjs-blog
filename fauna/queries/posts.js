@@ -29,7 +29,10 @@ const {
   Contains,
   Abort,
   Now,
-  Map
+  Map,
+  Trim,
+  LowerCase,
+  ReplaceStrRegex,
 } = q
 
 /* CreatePost will be used to create a user defined function
@@ -44,7 +47,9 @@ function CreatePost(title, content, hashtags) {
           content: content,
           author: Select(['data', 'user'], Get(Identity())),
           hashtags: Var('hashtagrefs'),
+          slug: Slugify(title),
           views: 0,
+          hidden: false,
           // we will order by creation time, we already have 'ts' by default but updated will also update 'ts'.
           created: Now()
         }
@@ -119,7 +124,6 @@ function GetPostsWithUsersMapGetGeneric(TweetsSetRefOrArray) {
           post: Get(Var('ref')),
           // Get the user that wrote the post.
           user: Get(Select(['data', 'author'], Var('post'))),
-          // Get the account via identity
           hashtags: Map(
             Select(['data', 'hashtags'], Var('post')),
             Lambda('htRef', Get(Var('htRef')))
@@ -133,6 +137,19 @@ function GetPostsWithUsersMapGetGeneric(TweetsSetRefOrArray) {
         }
       )
     )
+  )
+}
+
+function Slugify(value){
+  return Let(
+    {
+      prepare: Trim(LowerCase(value)),
+      replaceSpace: ReplaceStrRegex(Var("prepare"), "\\s+", "-"),
+      replaceSpecial: ReplaceStrRegex(Var("replaceSpace"), "[^a-z0-9-_]", ""),
+      replaceHyphens: ReplaceStrRegex(Var("replaceSpecial"), "^-{1,}", ""),
+      result: ReplaceStrRegex(Var("replaceHyphens"), "-{1,}", "-"),
+    },
+    Var("result")
   )
 }
 
