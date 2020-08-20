@@ -1,4 +1,5 @@
 const faunadb = require('faunadb')
+import { handlePromiseError } from '../helpers/errors'
 const q = faunadb.query
 const {
   Documents,
@@ -92,6 +93,18 @@ const CreateIndexPostsByAuthor = CreateIndex({
   serialized: true
 })
 
+const CreateIndexPostsBySlug = CreateIndex({
+  name: 'posts_by_slug',
+  source: Collection('posts'),
+  terms: [
+    {
+      field: ['data', 'slug']
+    }
+  ],
+  unique: true,
+  serialized: true
+})
+
 const CreateIndexPostsByHashtagRef = CreateIndex({
   name: 'posts_by_hashtag_ref',
   source: Collection('posts'),
@@ -109,11 +122,12 @@ const CreateIndexPostsByHashtagRef = CreateIndex({
 })
 
 async function createPostsCollection(client) {
-  await client.query(If(Exists(Collection('post')), true, CreatePostsCollection))
-  await client.query(If(Exists(Index('all_posts')), true, CreateIndexAllPosts))
-  await client.query(If(Exists(Index('posts_by_author')), true, CreateIndexPostsByAuthor))
-  await client.query(If(Exists(Index('posts_by_reference')), true, CreateIndexPostsByReference))
-  await client.query(If(Exists(Index('posts_by_hashtag_ref')), true, CreateIndexPostsByHashtagRef))
+  await handlePromiseError(client.query(If(Exists(Collection('post')), true, CreatePostsCollection)), 'Creating posts collection')
+  await handlePromiseError(client.query(If(Exists(Index('all_posts')), true, CreateIndexAllPosts)), 'Creating all_posts index')
+  await handlePromiseError(client.query(If(Exists(Index('posts_by_author')), true, CreateIndexPostsByAuthor)), 'Creating posts_by_author index')
+  await handlePromiseError(client.query(If(Exists(Index('posts_by_reference')), true, CreateIndexPostsByReference)), 'Creating posts_by_reference index')
+  await handlePromiseError(client.query(If(Exists(Index('posts_by_hashtag_ref')), true, CreateIndexPostsByHashtagRef)), 'Creating posts_by_hasgtag_ref index')
+  await handlePromiseError(client.query(If(Exists(Index('posts_by_slug')), true, CreateIndexPostsBySlug)), 'Creating posts_by_slug index')
 }
 
 // Example of how you would cleanup the collections index that are created here.
@@ -125,6 +139,7 @@ async function deletePostsCollection(client) {
   await client.query(If(Exists(Index('post_by_author')), true, Delete(Index('post_by_author'))))
   await client.query(If(Exists(Index('post_by_reference')), true, Delete(Index('post_by_reference'))))
   await client.query(If(Exists(Index('post_by_hashtag_ref')), true, Delete(Index('post_by_hashtag_ref'))))
+  await client.query(If(Exists(Index('posts_by_slug')), true, Delete(Index('post_by_slug'))))
 }
 
 // Example of how you could delete all post in a collection
