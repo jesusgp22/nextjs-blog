@@ -33,6 +33,7 @@ const {
   Trim,
   LowerCase,
   ReplaceStrRegex,
+  ToMillis,
 } = q
 
 /* CreatePost will be used to create a user defined function
@@ -138,13 +139,15 @@ function GetPostsWithUsersAndHt(SetRefOrArray) {
           hashtags: Map(
             Select(['data', 'hashtags'], Var('post')),
             Lambda('htRef', Get(Var('htRef')))
-          )
+          ),
+          ts: ToMillis(Select(['data', 'created'], Var('post')))
         },
         // Return our elements
         {
           user: Var('user'),
           post: Var('post'),
-          hashtags: Var('hashtags')
+          hashtags: Var('hashtags'),
+          ts: Var('ts')
         }
       )
     )
