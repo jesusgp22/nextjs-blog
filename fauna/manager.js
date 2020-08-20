@@ -1,6 +1,7 @@
 import faunadb from 'faunadb'
 
 import { registerWithUser, login, logout } from './queries/auth'
+import { createPost, getPosts, getPostsByTag } from './queries/posts'
 
 /* Initialize the client to contact FaunaDB
  * The client is initially started with the a 'BOOTSTRAP' token.
@@ -14,7 +15,7 @@ class QueryManager {
     // A client is just a wrapper, it does not create a persitant connection
     // FaunaDB behaves like an API and will include the token on each request.
     // TODO: properly grab this from env
-    this.bootstrapToken = token || 'fnADzlrwt0ACE7YZ7wxlaA4Wtnd9x1d3OWQj1QS_'
+    this.bootstrapToken = token || 'fnADzph9ZFACE602Jt4LAuba1Q4RXJNejGl-oVvl'
     this.client = new faunadb.Client({
       secret: token || this.bootstrapToken
     })
@@ -46,6 +47,19 @@ class QueryManager {
       return res
     })
   }
+
+  createPost(title, content, hashtags){
+    return createPost(this.client, title, content, hashtags)
+  }
+
+  getPosts(){
+    return getPosts(this.client)
+  }
+
+  getPostsByTag(tag){
+    return getPostsByTag(this.client, tag)
+  }
+  
 }
 const faunaQueries = new QueryManager()
 export { faunaQueries, QueryManager }

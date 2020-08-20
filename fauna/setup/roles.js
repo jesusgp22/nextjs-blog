@@ -254,6 +254,10 @@ const CreateFnRoleManipulatePost = CreateOrUpdateRole({
       actions: { read: true }
     },
     {
+      resource: Index('posts_by_hashtag_ref'),
+      actions: { read: true }
+    },
+    {
       resource: Index('rate_limiting_by_action_and_identity'),
       actions: { read: true }
     },

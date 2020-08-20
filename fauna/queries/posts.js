@@ -28,7 +28,8 @@ const {
   Not,
   Contains,
   Abort,
-  Now
+  Now,
+  Map
 } = q
 
 /* CreatePost will be used to create a user defined function
@@ -74,8 +75,8 @@ function createPost(client, title, content, hashtags = []) {
 
 // get all posts
 function GetPosts() {
-  const FQLStatement = GetPostsWithUsersMapGetGeneric(Paginate(Match(Index('all_posts'))))
-
+  const FQLStatement = GetPostsWithUsersMapGetGeneric(Map(Paginate(Match(Index("all_posts"))), Lambda(["ts", "ref"], Var("ref"))))
+  
   return AddRateLimiting('get_posts', FQLStatement, Identity())
 }
 
@@ -84,19 +85,14 @@ function getPosts(client) {
   return client.query(Call(q.Function('get_posts'))).then(res => flattenDataKeys(res))
 }
 
-function GetPostsByTag(tagName) {
-  const FQLStatement = Let(
+function GetPostsByTag(tagname) {
+  const FQLStatement = GetPostsWithUsersMapGetGeneric(Let(
     {
-      // We only receive the tag name, not reference (since this is passed through the URL, a ref would be ugly in the url right?)
-      // So let's get the tag, we assume that it still exists (if not Get will error but that is fine for our use case)
-      tagReference: Select([0], Paginate(Match(Index('hashtags_by_name'), tagName))),
-      res: GetPostsWithUsersMapGetGeneric(
-        // Since we start of here with followerstats index (a ref we don't need afterwards, we can use join here!)
-        Paginate(Match(Index('posts_by_tag'), Var('tagReference'))),
-      )
+      tagReference: Select([0], Paginate(Match(Index('hashtags_by_name'), tagname))),
+      res: Paginate(Match(Index("posts_by_hashtag_ref"), Var('tagReference'))),
     },
     Var('res')
-  )
+  ))
 
   return AddRateLimiting('get_posts_by_tag', FQLStatement, Identity())
 }
@@ -111,7 +107,7 @@ function getPostsByTag(client, tag) {
  * a Post has the reference to the Account and an account has a reference to the user.
  */
 
-function GetPostsWithUsersMapGetGeneric(TweetsSetRefOrArray, depth = 1) {
+function GetPostsWithUsersMapGetGeneric(TweetsSetRefOrArray) {
   // Let's do this with a let to clearly show the separate steps.
   return q.Map(
     TweetsSetRefOrArray, // for all tweets this is just Paginate(Documents(Collection('posts'))), else it's a match on an index
@@ -122,11 +118,16 @@ function GetPostsWithUsersMapGetGeneric(TweetsSetRefOrArray, depth = 1) {
           // Get the user that wrote the post.
           user: Get(Select(['data', 'author'], Var('post'))),
           // Get the account via identity
+          hashtags: Map(
+            Select(['data', 'hashtags'], Var('post')),
+            Lambda('htRef', Get(Var('htRef')))
+          )
         },
         // Return our elements
         {
           user: Var('user'),
           post: Var('post'),
+          hashtags: Var('hashtags')
         }
       )
     )
