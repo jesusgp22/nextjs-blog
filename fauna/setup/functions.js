@@ -1,6 +1,6 @@
 
   import { RegisterWithUser, RegisterAccount, LoginAccount, LoginAccountExample1 } from '../queries/auth'
-  import { CreatePost, GetPosts, GetPostsByTag } from '../queries/posts'
+  import { CreatePost, GetPosts, GetPostsByTag, GetPostBySlug } from '../queries/posts'
   
   const faunadb = require('faunadb')
   const q = faunadb.query
@@ -93,6 +93,12 @@ const GetPostsByTagUDF = CreateOrUpdateFunction({
   body: Query(Lambda(['tagname'], GetPostsByTag(Var('tagname')))),
   role: Role('functionrole_get_posts')
 })
+
+const GetPostBySlugUDF = CreateOrUpdateFunction({
+  name: 'get_post_by_slug',
+  body: Query(Lambda(['slug'], GetPostBySlug(Var('slug')))),
+  role: Role('functionrole_get_posts'),
+})
   
   export {
     CreateAccountUDF,
@@ -103,6 +109,7 @@ const GetPostsByTagUDF = CreateOrUpdateFunction({
     CreatePostUDF,
     GetPostsUDF,
     GetPostsByTagUDF,
+    GetPostBySlugUDF,
     CreateOrUpdateFunction
   }
   

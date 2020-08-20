@@ -56,7 +56,7 @@ function CreatePost(title, content, hashtags) {
       }),
       // We then get the post in the same format as when we normally get them.
       // Since FQL is composable we can easily do this.
-      postWithUserAndAccount: GetPostsWithUsersMapGetGeneric([Select(['ref'], Var('newPost'))])
+      postWithUserAndAccount: GetPostsWithUsersAndHt([Select(['ref'], Var('newPost'))])
     },
     // TODO: return a less verbose key
     Var('postWithUserAndAccount')
@@ -80,7 +80,7 @@ function createPost(client, title, content, hashtags = []) {
 
 // get all posts
 function GetPosts() {
-  const FQLStatement = GetPostsWithUsersMapGetGeneric(Map(Paginate(Match(Index("all_posts"))), Lambda(["ts", "ref"], Var("ref"))))
+  const FQLStatement = GetPostsWithUsersAndHt(Map(Paginate(Match(Index("all_posts"))), Lambda(["ts", "ref"], Var("ref"))))
   
   // TODO: improve this to use either Identify() or global or a unique user identifier like IP
   return AddRateLimiting('get_posts', FQLStatement, 'global')
@@ -92,7 +92,7 @@ function getPosts(client) {
 }
 
 function GetPostsByTag(tagname) {
-  const FQLStatement = GetPostsWithUsersMapGetGeneric(Let(
+  const FQLStatement = GetPostsWithUsersAndHt(Let(
     {
       tagReference: Select([0], Paginate(Match(Index('hashtags_by_name'), tagname))),
       res: Paginate(Match(Index("posts_by_hashtag_ref"), Var('tagReference'))),
@@ -109,15 +109,26 @@ function getPostsByTag(client, tag) {
   return client.query(Call(q.Function('get_posts_by_tag'), tag)).then(res => flattenDataKeys(res))
 }
 
+function GetPostBySlug(slug){
+  const FQLStatement = Select([0], GetPostsWithUsersAndHt(Paginate(Match(Index('posts_by_slug'), slug))))
+
+  return AddRateLimiting('get_posts_by_slug', FQLStatement, 'global')
+}
+
+// 🔌 GET POST BY SLUG API ENDPOINT
+function getPostBySlug(client, slug){
+  return client.query(Call(q.Function('get_post_by_slug'), slug)).then(res => flattenDataKeys(res))
+}
+
 /* Get posts and the user that is the author of the message.
  * This is an example of a join using Map/Get which is easy when you have the reference of the element you need.
  * a Post has the reference to the Account and an account has a reference to the user.
  */
 
-function GetPostsWithUsersMapGetGeneric(TweetsSetRefOrArray) {
+function GetPostsWithUsersAndHt(SetRefOrArray) {
   // Let's do this with a let to clearly show the separate steps.
   return q.Map(
-    TweetsSetRefOrArray, // for all tweets this is just Paginate(Documents(Collection('posts'))), else it's a match on an index
+    SetRefOrArray, // for all tweets this is just Paginate(Documents(Collection('posts'))), else it's a match on an index
     Lambda(ref =>
       Let(
         {
@@ -161,4 +172,6 @@ export {
   getPosts,
   GetPostsByTag,
   getPostsByTag,
+  GetPostBySlug,
+  getPostBySlug,
 }

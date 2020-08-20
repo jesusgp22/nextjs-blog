@@ -1,7 +1,7 @@
 import faunadb from 'faunadb'
 
 import { registerWithUser, login, logout } from './queries/auth'
-import { createPost, getPosts, getPostsByTag } from './queries/posts'
+import { createPost, getPosts, getPostsByTag, getPostBySlug } from './queries/posts'
 
 /* Initialize the client to contact FaunaDB
  * The client is initially started with the a 'BOOTSTRAP' token.
@@ -58,6 +58,10 @@ class QueryManager {
 
   getPostsByTag(tag){
     return getPostsByTag(this.client, tag)
+  }
+
+  getPostBySlug(slug){
+    return getPostBySlug(this.client, slug)
   }
   
 }

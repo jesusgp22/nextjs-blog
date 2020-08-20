@@ -8,6 +8,7 @@ import {
   CreatePostUDF,
   GetPostsUDF,
   GetPostsByTagUDF,
+  GetPostBySlugUDF,
 } from './functions'
 
 import {
@@ -77,6 +78,7 @@ async function setupDatabase(client) {
   await handleSetupError(client.query(GetPostsUDF), 'user defined function - get posts')
   await handleSetupError(client.query(GetPostsByTagUDF), 'user defined function - get posts by tag')
   await handleSetupError(client.query(CreatePostUDF), 'user defined function - create posts (rate limited)')
+  await handleSetupError(client.query(GetPostBySlugUDF), 'user defined function - get post by slug')
 
   console.log('4b. -- Roles                   -- Creating security role that can call the functions')
   await handleSetupError(client.query(CreateBootstrapRole), 'function role - bootstrap')

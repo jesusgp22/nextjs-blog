@@ -47,6 +47,10 @@ const rateLimitingConfig = {
     calls: 5,
     perSeconds: 60 * 1000
   },
+  get_posts_by_slug: {
+    calls: 5,
+    perSeconds: 60 * 1000
+  },
   create_post: {
     calls: 5,
     perSeconds: 300 * 1000 // one post a minute

@@ -69,7 +69,13 @@ const CreateBootstrapRole = CreateOrUpdateRole({
       actions: {
         call: true
       }
-    }
+    },
+    {
+      resource: q.Function('get_post_by_slug'),
+      actions: {
+        call: true
+      }
+    },
   ]
 })
 
@@ -248,6 +254,12 @@ const CreateLoggedInRole = CreateOrUpdateRole({
         call: true
       }
     },
+    {
+      resource: q.Function('get_post_by_slug'),
+      actions: {
+        call: true
+      }
+    },
   ]
 })
 
@@ -372,6 +384,10 @@ const CreateFnRoleGetPosts = CreateOrUpdateRole({
     },
     {
       resource: Index('posts_by_author'),
+      actions: { read: true }
+    },
+    {
+      resource: Index('posts_by_slug'),
       actions: { read: true }
     },
   ]
