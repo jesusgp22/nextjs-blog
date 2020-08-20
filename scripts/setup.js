@@ -71,10 +71,25 @@ const main = async () => {
 
     console.log('6.  -- Keys                    -- Bootstrap key to start the app')
 
+    let json = null
+    try {
+      json = envfile.parseFileSync(sourcePath)
+    } catch (err) {
+      json = envfile.parseFileSync(sourcePathExample)
+    }
+
+    if(json.FAUNA_DB_KEY && json.FAUNA_DB_KEY !== ""){
+      console.log(
+        "A FAUNA_DB_KEY was found in the .env file, skipping boostrap token creation"
+      )
+      return
+    }
+
     const clientKey = await handleSetupError(
       client.query(CreateKey({ role: Role('keyrole_calludfs') })),
       'token - bootstrap'
     )
+
     if (clientKey) {
       console.log(
         '\x1b[32m',
@@ -82,12 +97,7 @@ const main = async () => {
 will be automatically installed in  the .env.local with the key FAUNA_DB_KEY, react will load the .env vars
 Don't forget to restart your frontend!`
       )
-      let json = null
-      try {
-        json = envfile.parseFileSync(sourcePath)
-      } catch (err) {
-        json = envfile.parseFileSync(sourcePathExample)
-      }
+
       json.FAUNA_DB_KEY = clientKey.secret
       fs.writeFileSync(sourcePath, envfile.stringifySync(json))
       console.log('\x1b[33m%s\x1b[0m', clientKey.secret)
