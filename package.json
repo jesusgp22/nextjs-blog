@@ -17,7 +17,7 @@
     "esm": "^3.2.25",
     "faunadb": "^2.14.2",
     "gray-matter": "^4.0.2",
-    "next": "9.5.2",
+    "next": "11.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "readline-promise": "^1.0.4",
